@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+
+<launch>
+  <rosparam file="$(find hb_config)/params/base_controller.yaml" command="load"/>
+  <node pkg="base_controller" name="base_controller_node" type="base_controller_node.py" output="screen"/>
+
+  <node pkg="joy"      		 name="joy" 			 type="joy_node"/>
+	<node pkg="joy_control"      name="joy_control_node" type="joy_control_node" output = "screen">
+		<rosparam file="$(find hb_config)/params/joystick.yaml" command="load"/>
+	</node>
+
+  <arg name="frame_id" default="vectornav"/>
+
+	<node pkg="vectornav" type="vnpub" name="vectornav" output="screen" >
+	  <param name="frame_id" value="$(arg frame_id)"/>
+      <rosparam command="load" file="$(find hb_config)/params/vn200.yaml" />
+	</node>	
+
+  <include file="$(find hb_launchers)/launch/VLP16_points.launch" />
+
+</launch>

@@ -1,0 +1,12 @@
+#joystck parameters
+speed_factor : 0.15
+reset_flag : false
+start_flag : false
+mode_xinput : false
+mode_normal : false
+
+#ros parameters
+loop_rate : 20
+cmd_vel_topic : "cmd_vel"
+joy_topic  :    "joy"
+

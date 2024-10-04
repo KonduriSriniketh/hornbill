@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<launch>
+	<node pkg="joy"      		 name="joy" 			 type="joy_node"/>
+	<node pkg="joy_control"      name="joy_control_node" type="joy_control_node" output = "screen">
+		<rosparam file="$(find joy_control)/config/joystick.yaml" command="load"/>
+	</node>
+</launch>
