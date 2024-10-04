@@ -1,0 +1,6 @@
+# Attributes like KERNELS, ATTRS{serial}, ATTRS{idVendor}, SYMLINK+ need to be modified accordingly
+
+KERNELS=="1-1.1", SUBSYSTEMS=="usb", ATTRS{idProduct}=="6001", ATTRS{serial}=="FT2UBNOH", ATTRS{idVendor}=="0403" SYMLINK+="hb_wheel", MODE="0666"
+KERNELS=="1-1.3.4", SUBSYSTEMS=="usb", ATTRS{idProduct}=="6001", ATTRS{serial}=="FT2URZOY", ATTRS{idVendor}=="0403" SYMLINK+="hb_arm", MODE="0666"
+KERNELS=="1-1.3.3", SUBSYSTEMS=="usb", ATTRS{idProduct}=="6001", ATTRS{serial}=="FT3JX9HC", ATTRS{idVendor}=="0403" SYMLINK+="hb_imu", MODE="0666"
+KERNELS=="1-1.3.2", SUBSYSTEMS=="usb", ATTRS{idProduct}=="6001", ATTRS{serial}=="FT3NKZYI", ATTRS{idVendor}=="0403" SYMLINK+="hb_encoder", MODE="0666"
