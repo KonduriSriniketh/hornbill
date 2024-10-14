@@ -1,5 +1,5 @@
 wheel_radius: 0.1 # robot wheel radius in meters
-wheel_base : 0.29 # distance between two wheels in meters
+wheel_base : 0.60 # distance between two wheels in meters
 
 #port: '/dev/OCE_ORRO_DRIVE'
 #port: '/dev/oriental'
@@ -11,6 +11,6 @@ left_motor_id: 2 #3
 right_motor_id: 3 #2
 arm_motor_id: 4 #1
 gear_ratio: 100
-max_RPM: 4000
+max_RPM: 3000
 
 imu_number: 0 # roll

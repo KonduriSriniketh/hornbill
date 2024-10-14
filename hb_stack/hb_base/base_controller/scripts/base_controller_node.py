@@ -5,6 +5,7 @@ import rospy
 import tf
 import orienbus as orien
 from nav_msgs.msg import Odometry
+from hb_msgs.msg import Speed
 from geometry_msgs.msg import Quaternion
 from geometry_msgs.msg import Twist, PoseWithCovarianceStamped
 from sensor_msgs.msg import Imu
@@ -12,17 +13,13 @@ from sensor_msgs.msg import Imu
 class BaseController(object):
 
     def __init__(self):
-        rospy.Subscriber("hedge_pose", PoseWithCovarianceStamped, self.uwbCallback)
-        self.uwb_flag=0
+
         self.odom_pub = rospy.Publisher('odom_wheel', Odometry, queue_size=10)
        # self.wheels_speed_pub = rospy.Publisher('wheels_speed', Twist, queue_size=1)
         rospy.Subscriber("/cmd_vel", Twist, self.cmdVelCallback)
-	
-        rospy.Subscriber("/imu_republisher/imu", Imu, self.imuCallback)
-        rospy.Subscriber("/odometry/filtered", Odometry, self.odom_filtered_Callback)
+
         self.odomBroadcaster = tf.TransformBroadcaster()
         self.imu_msg=Imu()
-        self.odom_filtered_msg=Odometry()
 
 
         self._wheel_base     = rospy.get_param('wheel_base', 0.14)
@@ -58,24 +55,13 @@ class BaseController(object):
         self.prev_yaw = 0
        # self.wheels_speed=Twist()
 	
-
-    def imuCallback(self, msg):
-	    self.imu_msg=msg
             
-    def odom_filtered_Callback(self, msg):
-	    self.odom_filtered_msg=msg
-
     def cmdVelCallback(self, msg):
 
         self.linear_x = msg.linear.x
         self.linear_y = msg.linear.y
         self.angular_z = msg.angular.z
 
-    def uwbCallback(self, msg):
-        if self.uwb_flag==0: 
-            self.x = msg.pose.pose.position.x
-            self.y = msg.pose.pose.position.y
-            self.uwb_flag=1
         
 
     def publish_odom(self):
@@ -94,10 +80,11 @@ class BaseController(object):
             angular_z = 0.25
         elif angular_z < -0.25:
             angular_z = -0.25
+        
         if linear_y > 0:
 	        self.arm_motor_speed_rpm = 200
-        elif linear_y < 0:
-	        self.arm_motor_speed_rpm = -200
+        elif(linear_y < 0):
+             self.arm_motor_speed_rpm = -200
         else:
 	        self.arm_motor_speed_rpm = 0
 
@@ -111,7 +98,7 @@ class BaseController(object):
         left_wheel_speed_rpm = left_wheel_speed * 60/ (2*math.pi) * self._gear_ratio
         print("left wheel speed rpm :", left_wheel_speed_rpm)
         print("right wheel speed rpm :", right_wheel_speed_rpm)
-        print("--")
+        print("-----")
 
 
         self._left_motor.writeSpeed(int(left_wheel_speed_rpm))
@@ -186,14 +173,13 @@ class BaseController(object):
         odom_quat = tf.transformations.quaternion_from_euler(0,0,self.th)
 
         # Create the odometry transform frame broadcaster (publish tf)
-
-#        self.odomBroadcaster.sendTransform(
-#                            (self.x, self.y, 0),
-#                            odom_quat,
-#                            rospy.Time.now(),
-#                            "base_link",
-#                            "odom"
-#                            )
+        self.odomBroadcaster.sendTransform(
+                           (self.x, self.y, 0),
+                           odom_quat,
+                           rospy.Time.now(),
+                           "base_link",
+                           "odom"
+                           )
 
 
         # Publish Odom
@@ -228,8 +214,7 @@ def main():
     rospy.on_shutdown(shutdownhook)
 
     while not rospy.is_shutdown():
-        if _object.uwb_flag==0:
-        	_object.publish_odom()
+        _object.publish_odom()
         rate.sleep()
     #rospy.spin()
 

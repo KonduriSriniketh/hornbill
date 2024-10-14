@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+
+<launch>
+  <rosparam file="$(find base_controller)/config/params.yaml" command="load"/>
+  <node pkg="base_controller" name="base_odometry_node" type="hb_base_odom.py" output="screen"/>
+</launch>

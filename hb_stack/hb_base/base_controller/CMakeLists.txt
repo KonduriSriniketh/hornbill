@@ -9,10 +9,14 @@ project(base_controller)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   rospy
+  nav_msgs
+  geometry_msgs
+  tf
+  hb_msgs
 )
 
 ## System dependencies are found with CMake's conventions
-# find_package(Boost REQUIRED COMPONENTS system)
+find_package(Boost REQUIRED COMPONENTS system)
 
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -103,7 +107,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES base_controller
-#  CATKIN_DEPENDS rospy
+  CATKIN_DEPENDS rospy
 #  DEPENDS system_lib
 )
 

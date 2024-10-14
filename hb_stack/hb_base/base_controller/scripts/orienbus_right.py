@@ -25,7 +25,7 @@ _FWD_DEC = 10
 _REV_DEC = 18
 
 _MIN_RPM = 80
-_MAX_RPM = 3000
+_MAX_RPM = 4000
 
 speed = 0
 
@@ -64,18 +64,18 @@ class ModBus(object):
 
 			if (speed >= _MIN_RPM and speed <= _MAX_RPM):
 				self.instrument.write_register(_WRITE_REGISTER_SPEED, speed)
-				self.instrument.write_register(_WRITE_REGISTER, _REV_DEC ) # run motor forward with default acceleration
-				# print("forward or_right")
+				self.instrument.write_register(_WRITE_REGISTER, _FWD_DEC) # run motor forward with default acceleration
+				print("forward")
 
 			elif (speed <= -_MIN_RPM and speed >= -_MAX_RPM):
 				self.instrument.write_register(_WRITE_REGISTER_SPEED, -speed)
-				self.instrument.write_register(_WRITE_REGISTER,  _FWD_DEC) # run motor backward with default acceleration
-				# print("reverse or_right")
+				self.instrument.write_register(_WRITE_REGISTER, _REV_DEC) # run motor backward with default acceleration
+				print("reverse")
 
 			else:
 				#self.instrument.write_register(_WRITE_REGISTER_SPEED, 0)
 				self.instrument.write_register(_WRITE_REGISTER, 34) # 34 stop motor with default deceleartion
-				# print("stop or_right")
+				print("stop")
 				
 		except:
 			pass

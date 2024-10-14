@@ -46,6 +46,8 @@ class ModBus(object):
 		self._port = _port
 		self._slave_address = _slave_address
 
+		print("salve address = ", _slave_address)
+
 		self.instrument = minimalmodbus.Instrument(self._port, self._slave_address)
 		self.instrument.serial.baudrate = 115200
 		#self.instrument.serial.baudrate = 9600
@@ -65,17 +67,17 @@ class ModBus(object):
 			if (speed >= _MIN_RPM and speed <= _MAX_RPM):
 				self.instrument.write_register(_WRITE_REGISTER_SPEED, speed)
 				self.instrument.write_register(_WRITE_REGISTER, _FWD_DEC) # run motor forward with default acceleration
-				print("forwarddddddddddddddddddd")
+				# print("forward or_left")
 
 			elif (speed <= -_MIN_RPM and speed >= -_MAX_RPM):
 				self.instrument.write_register(_WRITE_REGISTER_SPEED, -speed)
 				self.instrument.write_register(_WRITE_REGISTER, _REV_DEC) # run motor backward with default acceleration
-				print("reversefffffffffffff")
+				# print("reverse or_left")
 
 			else:
 				#self.instrument.write_register(_WRITE_REGISTER_SPEED, 0)
 				self.instrument.write_register(_WRITE_REGISTER, 34) # 34 stop motor with default deceleartion
-				print("stoprrrrrrrrrrrrrrr")
+				# print("stop or_left")
 				
 		except:
 			pass
