@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<launch>
+  <!--launch node-->
+  <node pkg="octomap_server" type="octomap_server_node" name="octomap_server"> 
+
+     <!--grid resolution-->
+    <param name="resolution" value="0.05" />
+    
+    <!--world frame, set to map by default-->
+    <param name="frame_id" type="string" value="map" />
+ 
+    <param name="sensor_model/max_range" value="1000.0" />
+    <param name="latch" value="true" />
+ 
+     <!--3d pointcloud range--> 
+    <param name="pointcloud_max_z" value="0.9" />
+    <param name="pointcloud_min_z" value="0.7" />
+ 
+    <!--param name="ground_filter_angle" value="3.14" /-->
+    
+     <!--subscribe to the name PointCloud2--> 
+     <!-- do remap from cloud_in-->
+    <!--remap from="/cloud_in" to="/lio_sam/mapping/cloud_registered" /-->
+    <remap from="/cloud_in" to="/cloud_pcd" />
+  </node>
+ 
+</launch>
+

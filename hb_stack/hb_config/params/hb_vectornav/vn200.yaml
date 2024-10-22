@@ -18,10 +18,10 @@ imu_output_rate: 40
 fixed_imu_rate: 800
 
 # Frame id to publish data in
-frame_id: Vectornav
+frame_id: vectornav
 
 # Data publication form, true for East North Up or false for North East Down <- false is default setting
-tf_ned_to_enu: false
+tf_ned_to_enu: true
 
 # If publishing ENU, do we want to publish in the frame labeled on the device? Default is false.
 # If tf_ned_to_enu = true and frame_based_enu = false orientation is reported by: x->y y->x z->-z to rotate the quaternion

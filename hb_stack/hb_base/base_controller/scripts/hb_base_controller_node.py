@@ -150,27 +150,27 @@ def main():
 
     rospy.on_shutdown(shutdownhook)
 
-    try:
-        workbook = openpyxl.load_workbook(file_path)
-    except FileNotFoundError:
-        # If the file doesn't exist, create a new workbook
-        workbook = openpyxl.Workbook()
+    # try:
+    #     workbook = openpyxl.load_workbook(file_path)
+    # except FileNotFoundError:
+    #     # If the file doesn't exist, create a new workbook
+    #     workbook = openpyxl.Workbook()
 
-    # Select the active sheet or create a new one
-    sheet = workbook.active
-    # Start writing from the first available empty row
-    start_row = sheet.max_row + 1  # Next empty row
+    # # Select the active sheet or create a new one
+    # sheet = workbook.active
+    # # Start writing from the first available empty row
+    # start_row = sheet.max_row + 1  # Next empty row
 
-    # Set headers for columns: time, x, y, value, and time
-    if sheet.max_row == 1:  # Check if the sheet is empty (only one row means it's empty)
-        sheet['A1'] = 'rostime'
-        sheet['B1'] = 'left_write_raw_speed_data'
-        sheet['C1'] = 'right_write_raw_speed_data'  
-        sheet['D1'] = 'left_read_raw_speed_data_internal'
-        sheet['E1'] = 'right_read_raw_speed_data'
+    # # Set headers for columns: time, x, y, value, and time
+    # if sheet.max_row == 1:  # Check if the sheet is empty (only one row means it's empty)
+    #     sheet['A1'] = 'rostime'
+    #     sheet['B1'] = 'left_write_raw_speed_data'
+    #     sheet['C1'] = 'right_write_raw_speed_data'  
+    #     sheet['D1'] = 'left_read_raw_speed_data_internal'
+    #     sheet['E1'] = 'right_read_raw_speed_data'
 
-    # Start writing from the first available empty row after headers
-    start_row = sheet.max_row + 1  # Next empty row
+    # # Start writing from the first available empty row after headers
+    # start_row = sheet.max_row + 1  # Next empty row
 
     while not rospy.is_shutdown():
 
@@ -179,15 +179,15 @@ def main():
         _object.WriteWheelSpeed(_object.right_wheel_speed, _object.left_wheel_speed)
         _object.WriteArmSpeed(_object.arm_speed)
         # Write the data
-        sheet[f'A{start_row}'] = _object.current_time.to_sec() 
-        sheet[f'B{start_row}'] = _object.left_wheel_speed_rpm  
-        sheet[f'C{start_row}'] = _object.right_wheel_speed_rpm  
-        sheet[f'D{start_row}'] = _object.l  
-        sheet[f'E{start_row}'] = _object.r
+        # sheet[f'A{start_row}'] = _object.current_time.to_sec() 
+        # sheet[f'B{start_row}'] = _object.left_wheel_speed_rpm  
+        # sheet[f'C{start_row}'] = _object.right_wheel_speed_rpm  
+        # sheet[f'D{start_row}'] = _object.l  
+        # sheet[f'E{start_row}'] = _object.r
 
-        # Increment the row for the next input
-        start_row += 1
-        workbook.save(file_path)
+        # # Increment the row for the next input
+        # start_row += 1
+        # workbook.save(file_path)
 
         rate.sleep()
 

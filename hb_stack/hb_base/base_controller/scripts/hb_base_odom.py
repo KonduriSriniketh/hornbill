@@ -25,6 +25,7 @@ class BaseOdometryNode(object):
         self._arm_motor_id   = rospy.get_param('arm_motor_id')
         self._gear_ratio     = rospy.get_param('gear_ratio')
         self.max_RPM         = rospy.get_param('max_RPM', 4000)
+        self.publish_tf      = rospy.get_param('publish_tf', False)
 
         self.vx = 0
         self.vy = 0
@@ -95,9 +96,10 @@ class BaseOdometryNode(object):
         # delta_y = (self.vx * math.sin(self.th) + self.vy * math.sin(self.th)) * dt
         delta_x = (self.vx * math.cos(self.th)) * dt
         delta_y = (self.vx * math.sin(self.th)) * dt
-        # delta_th = self.vth * dt # Calculate change in yaw using wheel feedback
+        delta_th = self.vth * dt # Calculate change in yaw using wheel feedback
 
-        delta_th = self.th_imu_prev - self.th_imu # Calculation using IMU only
+        # delta_th = self.th_imu_prev - self.th_imu # Calculation using IMU only
+        
         self.vth = delta_th/dt
     
         self.x += delta_x
@@ -113,22 +115,24 @@ class BaseOdometryNode(object):
         odom_quat = tf.transformations.quaternion_from_euler(0,0,self.th)
 
         # Broadcast tf
-        odom_trans = TransformStamped()
-        odom_trans.header.stamp = self.current_time
-        odom_trans.header.frame_id = "odom"
-        odom_trans.child_frame_id = "base_link"
-        odom_trans.transform.translation.x = self.x
-        odom_trans.transform.translation.y = self.y
-        odom_trans.transform.translation.z = 0.0
-        odom_trans.transform.rotation.x = odom_quat[0]
-        odom_trans.transform.rotation.y = odom_quat[1]
-        odom_trans.transform.rotation.z = odom_quat[2]
-        odom_trans.transform.rotation.w = odom_quat[3]
-        # Send the transform
-        self.odomBroadcaster.sendTransform((self.x, self.y, 0),
-                                       odom_quat,self.current_time, "base_link", "odom")
+        # if (self.publish_tf == True):
+
+        #     odom_trans = TransformStamped()
+        #     odom_trans.header.stamp = self.current_time
+        #     odom_trans.header.frame_id = "odom"
+        #     odom_trans.child_frame_id = "base_link"
+        #     odom_trans.transform.translation.x = self.x
+        #     odom_trans.transform.translation.y = self.y
+        #     odom_trans.transform.translation.z = 0.0
+        #     odom_trans.transform.rotation.x = odom_quat[0]
+        #     odom_trans.transform.rotation.y = odom_quat[1]
+        #     odom_trans.transform.rotation.z = odom_quat[2]
+        #     odom_trans.transform.rotation.w = odom_quat[3]
+        #     # Send the transform
+        #     self.odomBroadcaster.sendTransform((self.x, self.y, 0),
+        #                                    odom_quat,self.current_time, "base_link", "odom")
         odom = Odometry()
-        odom.header.frame_id = "odom_wheel"
+        odom.header.frame_id = "odom"
         odom.header.stamp = self.current_time
         odom.pose.pose.position.x = self.x
         odom.pose.pose.position.y = self.y

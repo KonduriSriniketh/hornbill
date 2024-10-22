@@ -1,0 +1,90 @@
+  <launch>
+  
+  <!-- Launch Vectorna IMU -->
+  <arg name="frame_id" default="vectornav"/>
+	<node pkg="vectornav" type="vnpub" name="vectornav" output="screen" >
+	  <param name="frame_id" value="$(arg frame_id)"/>
+      <rosparam command="load" file="$(find hb_config)/params/vn200.yaml" />
+	</node>	
+
+  <!-- launch wheel_odom and joy node for teleoperation -->
+
+  <!-- Launch base wheels, arm drivers -->
+  <node pkg="base_controller" name="base_controller_node" type="base_controller_node.py" output="screen"/>
+  <rosparam file="$(find hb_config)/params/base_controller.yaml" command="load"/>
+
+  <!-- Launch Joy node and joystick  -->
+  <node pkg="joy"      		 name="joy" 			 type="joy_node"/>
+	<node pkg="joy_control"      name="joy_control_node" type="joy_control_node" output = "screen">
+		<rosparam file="$(find hb_config)/params/joystick.yaml" command="load"/>
+	</node>
+
+  <!-- Launch velodyne lidar -->
+  <include file="$(find hb_launchers)/launch/VLP16_points.launch" />
+
+
+  <!-- launch transformation between base_link frame and velodyne frame -->
+  <node pkg="tf" type="static_transform_publisher" name="velodyne_2_base_publisher" args="0 0 0.6 0 0 0 base_link velodyne 10" />
+
+  <!--   Run the map server and launch 2D map --> 
+  <!-- <arg name="map_file" default="$(find waspm_launchers)/maps/2d_maps/new.yaml"/>
+  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)"/> -->
+
+  <!-- ekf with wheel_odom, IMU -->
+  <include file="$(find robot_localization)/launch/fum/fum_navigation_ekf_template.launch"/>
+
+  <!-- launch hdl_localization to locaize the robot -->
+
+  <!-- <arg name="global_map_pcd_value" default="/home/waspminiv2/fg_maps/map2.pcd" /> -->
+  <include file="$(find hdl_localization)/launch/fum_hdl_localization.launch" />
+  <!-- <arg name="global_map_pcd" value ="$arg global_map_pcd_value)"/> -->
+
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find waspm_launchers)/rviz/fum_navigation.rviz" />
+
+
+  <arg name="no_static_map" default="false"/>
+
+  <arg name="base_global_planner" default="navfn/NavfnROS"/>
+  <arg name="base_local_planner" default="dwa_local_planner/DWAPlannerROS"/>
+  <!-- <arg name="base_local_planner" default="base_local_planner/TrajectoryPlannerROS"/> -->
+
+  <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+
+    <param name="base_global_planner" value="$(arg base_global_planner)"/>
+    <param name="base_local_planner" value="$(arg base_local_planner)"/>  
+    <rosparam file="$(find robot_localization)/params/meerkat/move_base.yaml" command="load"/>
+    <!-- <remap from="/map" to="/map" /> -->
+    <!--remap from="/map_updates" to="/meerkat/map_updates"/--> 
+    <remap from="/odom" to="odom_ekf"/>
+    <remap from="/cmd_vel" to="/command_velocity" />
+    <!--<remap from="/meerkat/move_base_simple/goal" to="/move_base_simple/goal" />
+    <remap from="/meerkat/move_base/cancel" to="/move_base/cancel" /> -->
+
+    <!-- observation sources located in costmap_common.yaml -->
+    <rosparam file="$(find robot_localization)/params/meerkat/costmap_common.yaml" command="load" ns="global_costmap" />
+    <rosparam file="$(find robot_localization)/params/meerkat/costmap_common.yaml" command="load" ns="local_costmap" />
+
+
+    <!-- local costmap, needs size -->
+    <rosparam file="$(find robot_localization)/params/meerkat/costmap_local.yaml" command="load" ns="local_costmap" />
+    
+
+    <param name="local_costmap/width" value="5.0"/>
+    <param name="local_costmap/height" value="5.0"/>
+
+    <!-- static global costmap, static map provides size -->
+    <rosparam file="$(find robot_localization)/params/meerkat/costmap_global_static.yaml" command="load" ns="global_costmap" unless="$(arg no_static_map)"/>
+    
+    <!-- global costmap with laser, for odom_navigation_demo -->
+    <rosparam file="$(find robot_localization)/params/meerkat/costmap_global_laser.yaml" command="load" ns="global_costmap" if="$(arg no_static_map)"/>
+    <param name="global_costmap/width" value="100.0" if="$(arg no_static_map)"/>
+    <param name="global_costmap/height" value="100.0" if="$(arg no_static_map)"/>
+  </node>
+
+  
+
+
+
+
+</launch>
+

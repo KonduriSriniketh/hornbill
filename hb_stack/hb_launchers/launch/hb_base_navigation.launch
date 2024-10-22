@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+
+<launch>
+  
+  <!-- launch base  -->
+  <include file="$(find hb_launchers)/launch/hb_base.launch"/>
+
+  <!-- launch hdl_graph slam with  -->
+  <!-- <include file="$(find hb_launchers)/launch/hb_hdl_graph_slam.launch"/> -->
+
+
+
+  <!--   Run the map server and launch 2D map --> 
+  <arg name="map_file" default="$(find hb_maps)/maps/level6.yaml"/>
+  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)"/>
+
+  <!-- launch hdl_localization to locaize the robot -->
+  <include file="$(find hb_launchers)/launch/hb_hdl_localization.launch" />
+  
+  <!-- launch movebase -->
+  <include file="$(find hb_launchers)/launch/hb_movebase.launch" />
+
+</launch>
